@@ -10,7 +10,7 @@ Optionally, the words are sorted according to reading order (top to bottom, left
 ## Installation
 * Hit the following commands in your terminal:-
   
-```
+```Python
 pip install numpy
 pip install tensorflow
 pip install pickle
@@ -19,10 +19,10 @@ pip install matplotlib
 
 ## Usage
 Clone the repository in your local machine,put the image that you want to predict in test_images folder and ensure that it should be in `.png` format.
-If you want to compile the model then start the training it should take around (~1.3hrs) to train the model as the data set is qiuite huge so to avoid that i also have a pretrained
+If you want to compile the model then start the training it should take around (~1.3hrs) to train the model as the data set is quite huge so to avoid that i also have a pretrained
 model saved in the repos named `ocr_model_50_epoch.h5`load it via -
 
-```
+```Python
 custom_objects = {"CTCLayer": CTCLayer}
 
 reconstructed_model = keras.models.load_model("./ocr_model_50_epoch.h5", custom_objects=custom_objects)
