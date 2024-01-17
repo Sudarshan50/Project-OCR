@@ -1,68 +1,36 @@
-# Word Segmentation with Scale Space Technique
-
-Implementation of the scale space technique for word segmentation proposed by 
-[R. Manmatha and N. Srimal](http://ciir.cs.umass.edu/pubfiles/mm-27.pdf). 
-Even though the paper is from 1999, the method still achieves good results, is fast, and has a simple implementation. 
+# Project Name: **Optical Character Recogintion**:
+#### A powerful open-source Reinforcement learning model for detecting characters present in the image.
+This repository holds the code and resources for **OCR**, a machine learning model trained to perform **optical text recogonistion** with exceptional accuracy. Built using `tensorflow`,`numpy`,`pickle`,`matplotlib`,`os`, the model excels at **recogonising handwritten letters**, making it ideal for applications such as search by image Eg. ****Google Images****. 
 The algorithm takes an **image containing words as input** and **outputs the detected words**.
 Optionally, the words are sorted according to reading order (top to bottom, left to right).
 
-![example](./doc/example.png)
+![example](/outputv1.png)
+
 
 ## Installation
-
-* Go to the root level of the repository
-* Execute `pip install .`
-* Go to `tests/` and execute `pytest` to check if installation worked
+* Hit the following commands in your terminal:-
+  
+```
+pip install numpy
+pip install tensorflow
+pip install pickle
+pip install matplotlib
+```
 
 ## Usage
+Clone the repository in your local machine,put the image that you want to predict in test_images folder and ensure that it should be in `.png` format.
+If you want to compile the model then start the training it should take around (~1.3hrs) to train the model as the data set is qiuite huge so to avoid that i also have a pretrained
+model saved in the repos named `ocr_model_50_epoch.h5`load it via -
 
-This example loads an image of a text line, prepares it for the detector (1), detects words (2), 
-sorts them (3), and finally shows the cropped words (4).
+```
+custom_objects = {"CTCLayer": CTCLayer}
 
-````python
-from word_detector import prepare_img, detect, sort_line
-import matplotlib.pyplot as plt
-import cv2
+reconstructed_model = keras.models.load_model("./ocr_model_50_epoch.h5", custom_objects=custom_objects)
 
-# (1) prepare image:
-# (1a) convert to grayscale
-# (1b) scale to specified height because algorithm is not scale-invariant
-img = prepare_img(cv2.imread('data/line/0.png'), 50)
-
-# (2) detect words in image
-detections = detect(img,
-                    kernel_size=25,
-                    sigma=11,
-                    theta=7,
-                    min_area=100)
-
-# (3) sort words in line
-line = sort_line(detections)[0]
-
-# (4) show word images
-plt.subplot(len(line), 1, 1)
-plt.imshow(img, cmap='gray')
-for i, word in enumerate(line):
-  print(word.bbox)
-  plt.subplot(len(line), 1, i + 2)
-  plt.imshow(word.img, cmap='gray')
-plt.show()
-````
-
-The repository contains some examples showing how to use the package:
-* Install requirements: `pip install -r requirements.txt`
-* Go to `examples/`
-* Run `python main.py` to detect words in line images (IAM dataset)
-* Or, run `python main.py --data ../data/page --img_height 1000 --theta 5` to run the detector on an image of a page (also from IAM dataset)
-
-
-The package contains the following functions:
-* `prepare_img`: prepares input image for detector
-* `detect`: detect words in image
-* `sort_line`: sort words in a (single) line
-* `sort_multiline`: cluster words into lines, then sort each line separately
-
-For more details on the functions and their parameters use `help(function_name)`, e.g. `help(detect)`.
+prediction_model = keras.models.Model(
+  reconstructed_model.get_layer(name="image").input, reconstructed_model.get_layer(name="dense2").output
+)
+```
 
 
 ## Algorithm
@@ -74,17 +42,14 @@ The illustration below shows how the algorithm works:
 * bottom left: threshold filtered image
 * bottom right: compute bounding boxes
 
-![illustration](./doc/illustration.png)
-
 The filter kernel with size=25, sigma=5 and theta=3 is shown below on the left. 
 It models the typical shape of a word, with the width larger than the height (in this case by a factor of 3). 
 On the right the frequency response is shown (DFT of size 100x100). 
 The filter is in fact a low-pass, with different cut-off frequencies in x and y direction.
-![kernel](./doc/kernel.png)
 
 ## Output sample
 
-![Screenshot](outputv1.png)
+![Screenshot](/outputv1.png)
 
 
 ## How to select parameters
